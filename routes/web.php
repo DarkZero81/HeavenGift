@@ -11,7 +11,7 @@ use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-
+use App\Http\Controllers\StripePaymentController;
 use Illuminate\Support\Facades\Auth;
 
 Route::get('/', function () {
@@ -56,3 +56,7 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
 Auth::routes();
 
 Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
+
+Route::get('/pay', [StripePaymentController::class, 'showPaymentForm'])->name('pay.form');
+Route::post('/pay', [StripePaymentController::class, 'processPayment'])->name('pay.process');
+Route::get('/payment/success', [StripePaymentController::class, 'paymentSuccess'])->name('payment.success');

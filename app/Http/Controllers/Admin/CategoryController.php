@@ -8,7 +8,7 @@ use App\Models\Category;
 
 class CategoryController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
         // eager load product counts for display in the index view
         // allow the user to control how many items appear per page via `?per_page=`
@@ -21,16 +21,9 @@ class CategoryController extends Controller
         // optional filter: ?is_active=1 or ?is_active=0
         $isActiveFilter = request()->query('is_active', null);
 
-        // optional search: ?q=term
-        $q = trim((string) request()->query('q', ''));
-
         $query = Category::withCount('products');
         if ($isActiveFilter !== null && in_array($isActiveFilter, ['0', '1'], true)) {
             $query->where('is_active', (bool) $isActiveFilter);
-        }
-
-        if ($q !== '') {
-            $query->where('name', 'like', '%' . $q . '%');
         }
 
         $categories = $query->paginate($perPage)->withQueryString();
@@ -40,12 +33,7 @@ class CategoryController extends Controller
         $activeCount = Category::where('is_active', true)->count();
         $inactiveCount = Category::where('is_active', false)->count();
 
-        // If AJAX request, return only the table partial for faster updates
-        if ($request->ajax()) {
-            return view('admin.categories._table', compact('categories', 'q'));
-        }
-
-        return view('admin.categories.index', compact('categories', 'total', 'activeCount', 'inactiveCount', 'q'));
+        return view('admin.categories.index', compact('categories', 'total', 'activeCount', 'inactiveCount'));
     }
 
     public function create()

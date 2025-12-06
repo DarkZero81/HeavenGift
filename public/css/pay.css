@@ -1,0 +1,147 @@
+   /* تعريف متغيرات الألوان من home.css */
+        :root {
+            --primary: #FF6B00;
+            /* برتقالي */
+            --secondary: #50247A;
+            /* بنفسجي غامق */
+            --dark: #0F061E;
+            /* غامق جداً */
+            --light: #F8F9FA;
+            /* فاتح */
+            --accent: #FFD200;
+            /* أصفر ذهبي */
+        }
+
+        /* الخلفية والتخطيط العام */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            color: var(--light);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+
+        /* حاوية الدفع الرئيسية (البطاقة) */
+        .payment-container {
+            max-width: 450px;
+            width: 100%;
+            background-color: var(--dark);
+            padding: 2.5rem;
+            border-radius: 12px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--accent);
+        }
+
+        /* العنوان */
+        h2 {
+            text-align: center;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+            font-weight: 700;
+            border-bottom: 2px solid rgba(255, 210, 0, 0.3);
+            padding-bottom: 0.5rem;
+        }
+
+        /* مجموعات الحقول */
+        .form-group {
+            margin-bottom: 1.25rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--light);
+        }
+
+        /* حقول الإدخال */
+        input {
+            padding: 0.75rem;
+            width: 100%;
+            border: 1px solid var(--secondary);
+            border-radius: 8px;
+            font-size: 1rem;
+            box-sizing: border-box;
+            background-color: #1a0f2b;
+            color: var(--light);
+        }
+
+        input:focus {
+            outline: none;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(255, 210, 0, 0.3);
+        }
+
+        /* عنصر البطاقة من Stripe - تم تغيير الخلفية لتظهر بشكل مرئي */
+        #card-element {
+            padding: 0.75rem;
+            border: 1px solid var(--accent);
+            border-radius: 8px;
+            background-color: var(--secondary);
+            /* لون بنفسجي غامق فاتح قليلاً */
+        }
+
+        /* رسائل الخطأ */
+        #card-errors {
+            color: var(--accent);
+            margin-top: 1rem;
+            font-weight: 500;
+            text-align: center;
+            background-color: #7a2424;
+            border: 1px solid #ff6b6b;
+            padding: 0.75rem;
+            border-radius: 8px;
+            display: none;
+        }
+
+        /* زر الدفع */
+        .submit-btn {
+            background-color: var(--primary);
+            color: var(--dark);
+            border: none;
+            padding: 1rem 1.5rem;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s;
+            margin-top: 2rem;
+            width: 100%;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background-color: var(--accent);
+            transform: translateY(-3px);
+            color: var(--dark);
+        }
+
+        .submit-btn:disabled {
+            background-color: #ff9d5c;
+            cursor: not-allowed;
+            opacity: 0.6;
+            transform: none;
+        }
+
+        .spinner {
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top: 4px solid var(--accent);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
