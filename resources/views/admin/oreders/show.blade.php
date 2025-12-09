@@ -75,7 +75,7 @@
                         <h6 class="m-0 font-weight-bold text-primary">حالة الطلب</h6>
                     </div>
                     <div class="card-body">
-                        <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST">
+                        <form action="{{ route('admin.orders.updateStatus', $order->id) }}" method="POST">
                             @csrf
                             <div class="form-group">
                                 <label>الحالة الحالية:</label>

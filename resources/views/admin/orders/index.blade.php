@@ -61,11 +61,11 @@
                                         <div class="btn-group">
                                             <a href="{{ route('admin.orders.show', $order) }}"
                                                 class="btn btn-sm btn-primary">
-                                                <i class="bi bi-eye"></i>
+                                                <i class="fas fa-eye"></i>
                                             </a>
                                             <button type="button" class="btn btn-sm btn-info" data-toggle="modal"
                                                 data-target="#statusModal{{ $order->id }}">
-                                                <i class="bi bi-pencil"></i>
+                                                <i class="fas fa-edit"></i>
                                             </button>
                                         </div>
                                     </td>

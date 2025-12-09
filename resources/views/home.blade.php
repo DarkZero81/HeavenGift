@@ -32,6 +32,7 @@
                     <div class="mt-4">
                         <a href="{{ route('products.index') }}" class="btn btn-lg btn-outline-warning">Shop Now</a>
                         <a href="{{ route('products.index') }}" class="btn btn-lg btn-outline-light ms-3">View Products</a>
+                        <a href="{{ route('payment.now') }}" class="btn btn-lg btn-success ms-3">Quick Payment</a>
                     </div>
                 </div>
             </div>

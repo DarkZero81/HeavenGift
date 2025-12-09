@@ -1,5 +1,4 @@
-@extends('layouts.app')
-{{-- افترضت أن لديك ملف 'layouts.app' كملف تخطيط أساسي --}}
+@extends('layouts.admin')
 
 @section('title', 'الملف الشخصي للمستخدم')
 
@@ -57,7 +56,7 @@
 
                         <div class="text-center mt-4">
                             {{-- زر لتعديل المعلومات (اختياري) --}}
-                            <a href="{{ route('profile.edit') ?? '#' }}" class="btn btn-warning">
+                            <a href="{{ route('profile.show') }}" class="btn btn-warning">
                                 <i class="bi bi-pencil-square me-1"></i> تعديل الملف الشخصي
                             </a>
 

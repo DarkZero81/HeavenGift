@@ -70,7 +70,7 @@
     }
 </style>
 
-<button class="Btn" type="submit" id="submit-button" onclick="{{ route('payment.success', 'success') }}">
+<button class="Btn" type="submit" id="submit-button">
     Pay Now
     <svg class="svgIcon" viewBox="0 0 576 512">
         <path

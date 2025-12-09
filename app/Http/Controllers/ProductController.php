@@ -72,4 +72,46 @@ class ProductController extends Controller
 
         return view('products.index', compact('products', 'categories', 'selectedCategory'));
     }
+
+    /**
+     * Search products based on query string.
+     */
+    public function search(Request $request)
+    {
+        $request->validate([
+            'query' => 'required|string|min:2|max:255'
+        ]);
+
+        $searchQuery = trim($request->input('query'));
+
+        // Search in product name and description (case-insensitive)
+        $products = Product::with('category')
+            ->where('stock', '>', 0)
+            ->where(function ($q) use ($searchQuery) {
+                $q->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+                    ->orWhereRaw('LOWER(description) LIKE ?', ['%' . strtolower($searchQuery) . '%']);
+            })
+            ->latest()
+            ->paginate(12)
+            ->withQueryString();
+
+        // Also search in category names (case-insensitive)
+        $categoryProducts = Category::where('is_active', true)
+            ->whereRaw('LOWER(name) LIKE ?', ['%' . strtolower($searchQuery) . '%'])
+            ->with(['products' => function ($q) {
+                $q->where('stock', '>', 0);
+            }])
+            ->get()
+            ->pluck('products')
+            ->flatten()
+            ->unique('id');
+
+        // Combine and remove duplicates
+        $allResults = $products->getCollection()->merge($categoryProducts)->unique('id');
+
+        // Reset pagination with combined results
+        $products->setCollection($allResults);
+
+        return view('products.search', compact('products', 'searchQuery'));
+    }
 }

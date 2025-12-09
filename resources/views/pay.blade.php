@@ -6,25 +6,25 @@
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>صفحة الدفع</title>
+    <title>Payment Page</title>
 
     <script src="https://js.stripe.com/v3/"></script>
     <style>
-        /* تعريف متغيرات الألوان من home.css */
+        /* Color variable definitions from home.css */
         :root {
             --primary: #FF6B00;
-            /* برتقالي */
+            /* Orange */
             --secondary: #50247A;
-            /* بنفسجي غامق */
+            /* Dark Purple */
             --dark: #0F061E;
-            /* غامق جداً */
+            /* Very Dark */
             --light: #F8F9FA;
-            /* فاتح */
+            /* Light */
             --accent: #FFD200;
-            /* أصفر ذهبي */
+            /* Golden Yellow */
         }
 
-        /* الخلفية والتخطيط العام */
+        /* Background and General Layout */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -37,7 +37,7 @@
             padding: 20px;
         }
 
-        /* حاوية الدفع الرئيسية (البطاقة) */
+        /* Main Payment Container (Card) */
         .payment-container {
             max-width: 450px;
             width: 100%;
@@ -46,10 +46,10 @@
             border-radius: 12px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
             border: 1px solid var(--accent);
-            /* حدود بلون التركيز */
+            /* Accent colored border */
         }
 
-        /* العنوان */
+        /* Title */
         h2 {
             text-align: center;
             color: var(--accent);
@@ -59,7 +59,7 @@
             padding-bottom: 0.5rem;
         }
 
-        /* مجموعات الحقول */
+        /* Form Groups */
         .form-group {
             margin-bottom: 1.25rem;
         }
@@ -71,7 +71,7 @@
             color: var(--light);
         }
 
-        /* حقول الإدخال */
+        /* Input Fields */
         input {
             padding: 0.75rem;
             width: 100%;
@@ -80,7 +80,7 @@
             font-size: 1rem;
             box-sizing: border-box;
             background-color: #1a0f2b;
-            /* لون خلفية أغمق للحقل */
+            /* Darker background color for field */
             color: var(--light);
         }
 
@@ -90,40 +90,39 @@
             box-shadow: 0 0 0 3px rgba(255, 210, 0, 0.3);
         }
 
-        /* عنصر البطاقة من Stripe */
-        /* عنصر البطاقة من Stripe - تم تغيير الخلفية لتبدو أكثر وضوحاً */
+        /* Stripe Card Element - The background changed to look clearer */
         #card-element {
             padding: 0.75rem;
             border: 1px solid var(--accent);
-            /* حدود بلون التركيز */
+            /* Accent colored border */
             border-radius: 8px;
             background-color: var(--secondary);
-            /* لون بنفسجي غامق فاتح قليلاً */
-            /* ضمان وضوح العنصر */
+            /* Slightly lighter dark purple color */
+            /* Ensure element visibility */
         }
 
-        /* رسائل الخطأ */
+        /* Error Messages */
         #card-errors {
             color: var(--accent);
-            /* استخدام لون التركيز للأخطاء */
+            /* Use accent color for errors */
             margin-top: 1rem;
             font-weight: 500;
             text-align: center;
             background-color: #7a2424;
-            /* خلفية حمراء داكنة */
+            /* Dark red background */
             border: 1px solid #ff6b6b;
             padding: 0.75rem;
             border-radius: 8px;
             display: none;
-            /* يتم إظهاره عبر JavaScript */
+            /* Displayed via JavaScript */
         }
 
-        /* زر الدفع */
+        /* Payment Button */
         .submit-btn {
             background-color: var(--primary);
-            /* برتقالي جذاب */
+            /* Attractive Orange */
             color: var(--dark);
-            /* نص غامق للتباين */
+            /* Dark text for contrast */
             border: none;
             padding: 1rem 1.5rem;
             font-size: 1.1rem;
@@ -137,7 +136,7 @@
 
         .submit-btn:hover:not(:disabled) {
             background-color: var(--accent);
-            /* يتغير لون الزر عند التمرير */
+            /* Button color changes on hover */
             transform: translateY(-3px);
             color: var(--dark);
         }
@@ -153,7 +152,7 @@
 
 <body>
     <div class="payment-container">
-        <h2>إتمام عملية الدفع</h2>
+        <h2>Complete Payment</h2>
 
         <form id="payment-form">
             <div class="form-group">
@@ -162,12 +161,12 @@
             </div>
 
             <div class="form-group">
-                <label for="amount">المبلغ المطلوب دفعه</label>
-                <input type="text" id="amount" value="150.00 ر.س" readonly>
+                <label for="amount">Amount to be Paid</label>
+                <input type="text" id="amount" value="150.00 SAR" readonly>
             </div>
 
             <div class="form-group">
-                <label for="card-element"> Cridet Card Info</label>
+                <label for="card-element"> Credit Card Info</label>
                 <div id="card-element">
                 </div>
             </div>
@@ -181,11 +180,12 @@
 
 
     <script>
-        // إعداد Stripe (هذا الجزء مطلوب لتجربة الواجهة بشكل كامل)
-        const stripe = Stripe('pk_test_XXXXXXXXXXXXXXXXXXXXXXXX'); // *ضع مفتاحك العام هنا*
+        // Stripe Setup (This part is required to fully experience the interface)
+        const stripe = Stripe(
+            '{{ $stripeKey ?? 'pk_test_XXXXXXXXXXXXXXXXXXXXXXXX' }}'); // Using the key from controller or fallback
         const elements = stripe.elements();
 
-        // إنشاء عنصر البطاقة
+        // Create Card Element
         const card = elements.create('card', {
             style: {
                 base: {
@@ -205,10 +205,10 @@
             }
         });
 
-        // تركيب عنصر البطاقة في واجهة المستخدم
+        // Mount the Card Element to the UI
         card.mount('#card-element');
 
-        // التعامل مع الأخطاء الفورية في حقول البطاقة
+        // Handle immediate errors in card fields
         card.addEventListener('change', function(event) {
             const displayError = document.getElementById('card-errors');
             if (event.error) {
@@ -220,25 +220,20 @@
             }
         });
 
-        // معالجة إرسال النموذج (هذا الجزء سيحتاج إلى ربط بالخادم في تطبيق Laravel)
+        // Handle Form Submission
         const form = document.getElementById('payment-form');
         form.addEventListener('submit', function(event) {
             event.preventDefault();
             const submitBtn = document.getElementById('submit-button');
 
-            // إيقاف الزر وعرض حالة التحميل
+            // Disable button and show loading state
             submitBtn.disabled = true;
-            submitBtn.innerHTML = '<div class="spinner"></div>'; // يمكنك إضافة تصميم سبينر بسيط هنا إن أردت
+            submitBtn.innerHTML = '<div class="spinner">Processing...</div>';
 
-            // في تطبيقك الفعلي، ستقوم هنا باستدعاء الخادم لإنشاء Payment Intent
-            // ثم تأكيد الدفع باستخدام confirmCardPayment
-
-            // محاكاة لعملية معالجة
+            // Processing simulation: Redirect to success page after 2 seconds
             setTimeout(() => {
-                // محاكاة النجاح أو الفشل
-                alert('تم محاكاة إرسال بيانات الدفع. يجب الآن ربطها بـ Laravel.');
-                submitBtn.disabled = false;
-                submitBtn.textContent = 'دفع الآن';
+                // Simulate success and redirect to the success page
+                window.location.href = '/payment-success'; // Use your actual Laravel route here
             }, 2000);
         });
     </script>

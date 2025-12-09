@@ -1,6 +1,6 @@
 <div class="card h-100">
     @if ($product->image)
-        <img src="{{ asset($product->image) }}" class="card-img-top" style="height:300px; width: 250px;margin-left:15%;"
+        <img src="{{ asset($product->image) }}" class="card-img-top" style="height:300px; width: 250px;margin:20px"
             alt="{{ $product->name }}">
     @else
         <img src="https://via.placeholder.com/400x200?text=Flower" class="card-img-top"

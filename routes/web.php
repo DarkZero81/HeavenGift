@@ -1,75 +1,124 @@
 <?php
-// routes/web.php
+
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Auth;
+
+// --- Controllers for Frontend ---
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\ReviewController;
-use App\Http\Controllers\ContactController;
+use App\Http\Controllers\StripePaymentController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\HomeController;
+
+// --- Controllers for Admin ---
 use App\Http\Controllers\Admin\CategoryController as AdminCategoryController;
 use App\Http\Controllers\Admin\ProductController as AdminProductController;
 use App\Http\Controllers\Admin\OrderController as AdminOrderController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
-use App\Http\Controllers\StripePaymentController;
-use Illuminate\Support\Facades\Auth;
+
+
+/*
+|--------------------------------------------------------------------------
+| Public & General Routes
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('home');
-});
+})->name('home'); // تعديل: تم تسمية المسار باسم 'home' بدلاً من المسار التلقائي
 Route::get("/wel", function () {
     return view("welcome");
 });
+
+// مسارات الموارد القياسية (Categories & Products)
 Route::resource('categories', CategoryController::class);
 Route::resource('products', ProductController::class)->only(['index', 'show']);
-
-// Cart routes
-Route::get('cart', [CartController::class, 'index'])->name('cart.index');
-Route::post('cart/add', [CartController::class, 'add'])->name('cart.add');
-Route::post('cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
-Route::post('cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
-Route::post('cart/clear', [CartController::class, 'clear'])->name('cart.clear');
-
-// Checkout
-Route::get('checkout', [CheckoutController::class, 'checkout'])->name('checkout.index');
-Route::post('checkout', [CheckoutController::class, 'store'])->name('checkout.store');
-Route::get('checkout/thanks', [CheckoutController::class, 'thanks'])->name('checkout.thanks');
 
 // Reviews
 Route::post('products/{product}/reviews', [ReviewController::class, 'store'])->name('reviews.store');
 
-// Contact (simple)
-Route::get('contact', function () {
-    return view('contact');
-})->name('contact');
+// Search
+Route::get('search', [ProductController::class, 'search'])->name('products.search');
 
-// Admin routes
-Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\EnsureAdmin::class])->group(function () {
-    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
-    Route::resource('categories', AdminCategoryController::class);
-    Route::resource('products', AdminProductController::class);
-    Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'destroy']);
-    Route::post('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+// Contact (استخدام Route::view أبسط لعرض صفحة ثابتة)
+Route::view('contact', 'contact')->name('contact');
+
+/*
+|--------------------------------------------------------------------------
+| Cart Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('cart')->name('cart.')->controller(CartController::class)->group(function () {
+    Route::get('/', 'index')->name('index');
+    Route::post('add', 'add')->name('add');
+    Route::post('update/{id}', 'update')->name('update');
+    Route::post('remove/{id}', 'remove')->name('remove');
+    Route::post('clear', 'clear')->name('clear');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Checkout Routes
+|--------------------------------------------------------------------------
+*/
+Route::controller(CheckoutController::class)->group(function () {
+    Route::get('checkout', 'checkout')->name('checkout.index');
+    Route::post('checkout', 'store')->name('checkout.store');
+    Route::get('checkout/thanks', 'thanks')->name('checkout.thanks');
 });
 
 
+/*
+|--------------------------------------------------------------------------
+| Payment Routes (Stripe)
+|--------------------------------------------------------------------------
+*/
+Route::controller(StripePaymentController::class)->group(function () {
+    Route::get('/pay', 'showPaymentForm')->name('pay.form');
+    Route::post('/pay', 'processPayment')->name('payment.process');
+    Route::get('/payment-success', 'paymentSuccess')->name('payment.success');
+    Route::get('/payment-now', 'instantPayment')->name('payment.now');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Authentication Routes & User Profile
+|--------------------------------------------------------------------------
+*/
+
 Auth::routes();
+Route::get('/home', [HomeController::class, 'index'])->name('dashboard.home'); // تم تغيير الاسم لتجنب التكرار مع الجذر
 
-Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-
-Route::get('/pay', [StripePaymentController::class, 'showPaymentForm'])->name('pay.form');
-Route::post('/pay', [StripePaymentController::class, 'processPayment'])->name('pay.process');
-Route::get('/payment/success', [StripePaymentController::class, 'paymentSuccess'])->name('payment.success');
-
-use App\Http\Controllers\ProfileController;
-
-// ... المسارات الأخرى ...
-
-// مجموعة مسارات تتطلب تسجيل الدخول (middleware('auth'))
 Route::middleware('auth')->group(function () {
-    // المسار لصفحة عرض الملف الشخصي
-    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
-    Route::get('/userinfo', [ProfileController::class, 'show'])->name('userinfo');
+    Route::controller(ProfileController::class)->group(function () {
+        // عرض الملف الشخصي ومعلومات المستخدم
+        Route::get('/profile', 'show')->name('profile.show');
+        Route::get('/userinfo', 'show')->name('userinfo');
 
-    // ... مسارات أخرى داخل مجموعة المصادقة ...
+        // تحديث الملف الشخصي (تم إزالة {user} لافتراض تحديث المستخدم الحالي)
+        Route::put('/profile', 'update')->name('profile.update');
+    });
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Admin Panel Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware\EnsureAdmin::class])->group(function () {
+    // الداشبورد
+    Route::get('/', [AdminDashboardController::class, 'index'])->name('dashboard');
+
+    // مسارات الموارد للوحة التحكم
+    Route::resource('categories', AdminCategoryController::class);
+    Route::resource('products', AdminProductController::class);
+
+    // مسارات الطلبات
+    Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'destroy']);
+    Route::post('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });

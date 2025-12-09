@@ -60,7 +60,7 @@
                                     <td>{{ $order->created_at->format('Y-m-d H:i') }}</td>
                                     <td>
                                         <div class="btn-group">
-                                            <a href="{{ route('admin.orders.show', $order) }}"
+                                            <a href="{{ route('admin.orders.show', $order->id) }}"
                                                 class="btn btn-sm btn-primary">
                                                 <i class="bi bi-eye"></i>
                                             </a>
@@ -76,7 +76,8 @@
                                 <div class="modal fade" id="statusModal{{ $order->id }}" tabindex="-1" role="dialog">
                                     <div class="modal-dialog" role="document">
                                         <div class="modal-content">
-                                            <form action="{{ route('admin.orders.updateStatus', $order) }}" method="POST">
+                                            <form action="{{ route('admin.orders.updateStatus', $order->id) }}"
+                                                method="POST">
                                                 @csrf
                                                 <div class="modal-header">
                                                     <h5 class="modal-title">تغيير حالة الطلب #{{ $order->id }}</h5>
