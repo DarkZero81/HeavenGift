@@ -26,9 +26,10 @@ class ReviewController extends Controller
             'user_id' => Auth::id(),
             'rating' => $request->rating,
             'comment' => $request->comment,
-            'approved' => false,
+            'approved' => true, // <--- هذا هو التعديل الأساسي لظهوره فوراً
         ]);
 
-        return redirect()->route('products.show', $product->id)->with('success', 'Review submitted and awaiting approval');
+        // تم تعديل رسالة النجاح
+        return redirect()->route('products.show', $product->id)->with('success', 'تمت إضافة تقييمك بنجاح وسيظهر فوراً.');
     }
 }
