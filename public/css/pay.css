@@ -17,18 +17,13 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             color: var(--light);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+           
             margin: 0;
             padding: 20px;
         }
 
         /* حاوية الدفع الرئيسية (البطاقة) */
         .payment-container {
-            max-width: 450px;
-            width: 100%;
             background-color: var(--dark);
             padding: 2.5rem;
             border-radius: 12px;

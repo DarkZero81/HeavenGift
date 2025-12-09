@@ -57,16 +57,18 @@ class CheckoutController extends Controller
             }
         }
 
+        // إنشاء الطلب بحالة 'pending' (معلق)
         $order = order::create([
             'user_id' => Auth::id() ?? null,
             'total' => $total,
-            'status' => 'pending',
+            'status' => 'pending', // يبدأ الطلب معلقاً بانتظار الدفع
             'customer_name' => $request->customer_name,
             'customer_email' => $request->customer_email,
             'customer_phone' => $request->customer_phone,
             'customer_address' => $request->customer_address,
         ]);
 
+        // إضافة عناصر الطلب
         foreach ($cart->items as $item) {
             orderitem::create([
                 'order_id' => $order->id,
@@ -76,20 +78,17 @@ class CheckoutController extends Controller
             ]);
         }
 
-        // mark coupon used
+        // تحديد الكوبون كمُستخدَم (يمكن نقله إلى StripePaymentController بعد النجاح)
         if ($appliedCoupon) {
             $appliedCoupon->is_active = false;
             $appliedCoupon->save();
         }
 
-        // clear cart
-        foreach ($cart->items as $item) {
-            $item->delete();
-        }
-        $cart->status = 'ordered';
-        $cart->save();
+        // ❌ تم حذف (مسح سلة التسوق وتغيير حالتها) من هنا
+        // لأنها يجب أن تحدث فقط عند نجاح الدفع
 
-        return redirect()->route('checkout.thanks')->with('success', 'Order placed successfully');
+        // ✅ إعادة التوجيه إلى صفحة الدفع (pay.form) وتمرير معرف الطلب كمتغير استعلام (Query Parameter)
+        return redirect()->route('pay.form', ['order_id' => $order->id]);
     }
 
     public function thanks()

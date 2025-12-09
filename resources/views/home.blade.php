@@ -3,39 +3,6 @@
 @section('title', 'Home')
 
 @section('content')
-    <div class="row mb-4">
-        <div class="col-md-8">
-            <div class="hero-section p-4 rounded text-center text-md-start">
-                <h1 id="title">Welcome to Gift Heaven</h1>
-                <p class="lead">Fresh flowers delivered with love. Register now and receive a welcome coupon!</p>
-                @guest
-                    <a href="{{ route('register') }}" class="btn btn-warning text-dark">Register & Get Coupon</a>
-                @else
-                    <div class="alert alert-info">A welcome coupon has been issued to your account and will be auto-applied at
-                        checkout.</div>
-                @endguest
-            </div>
-        </div>
-        <div class="col-md-4">
-            <h5>Categories</h5>
-            <ul class="list-group">
-                @foreach (App\Models\Category::where('is_active', true)->get() as $cat)
-                    <li class="list-group-item"><a
-                            href="{{ route('products.index', ['category' => $cat->id]) }}">{{ $cat->name }}</a></li>
-                @endforeach
-            </ul>
-        </div>
-    </div>
-
-    <h3>Featured Products</h3>
-    <div class="row">
-        @foreach (App\Models\Product::latest()->limit(6)->get() as $product)
-            <div class="col-md-4 mb-4">
-                @include('partials.product_card', ['product' => $product])
-            </div>
-        @endforeach
-    </div>
-
     <!-- Hero / Carousel Section -->
     <section class="hero-section mt-4">
         <div class="container">
@@ -70,5 +37,39 @@
             </div>
         </div>
     </section>
+
+    <div class="row mb-4">
+        <div class="col-md-8">
+            <div class="hero-section p-4 rounded text-center text-md-start">
+                <h1 id="title">Welcome to Gift Heaven</h1>
+                <p class="lead">Fresh flowers delivered with love. Register now and receive a welcome coupon!</p>
+                @guest
+                    <a href="{{ route('register') }}" class="btn btn-warning text-dark">Register & Get Coupon</a>
+                @else
+                    <div class="alert alert-info">A welcome coupon has been issued to your account and will be auto-applied at
+                        checkout.</div>
+                @endguest
+            </div>
+        </div>
+        <div class="col-md-4">
+            <h5 style="color:gold" class="fs-3">Famous Categories</h5>
+            <ul class="list-group">
+                @foreach (App\Models\Category::latest()->limit(5)->get() as $cat)
+                    <li class="list-group-item"><a
+                            href="{{ route('products.index', ['category' => $cat->id]) }}">{{ $cat->name }}</a></li>
+                @endforeach
+            </ul>
+        </div>
+    </div>
+
+    <h3 style="color:gold" class="fs-3">Featured Products</h3>
+    <div class="row">
+        @foreach (App\Models\Product::latest()->limit(3)->get() as $product)
+            <div class="col-md-4 mb-4">
+                @include('partials.product_card', ['product' => $product])
+            </div>
+        @endforeach
+    </div>
+
 
 @endsection

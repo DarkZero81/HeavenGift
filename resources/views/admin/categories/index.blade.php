@@ -92,13 +92,13 @@
                                     <td>{{ $category->id }}</td>
                                     <td>
                                         @if ($category->image)
-                                            <img src="{{ asset('storage/' . $category->image) }}"
+                                            <img src="{{ asset('https://img.icons8.com/fluency/48/' . $category->name) }}"
                                                 alt="{{ $category->name }}" class="img-thumbnail"
                                                 style="width: 60px; height: 60px; object-fit: cover;">
                                         @else
                                             <div class="bg-light d-flex align-items-center justify-content-center"
-                                                style="width: 60px; height: 60px;">
-                                                <i class="bi bi-image text-muted"></i>
+                                                style="width: 80px; height: 80px;">
+                                                <i class="bi bi-{{ $category->name }} text-warning"></i>
                                             </div>
                                         @endif
                                     </td>

@@ -60,3 +60,16 @@ Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name
 Route::get('/pay', [StripePaymentController::class, 'showPaymentForm'])->name('pay.form');
 Route::post('/pay', [StripePaymentController::class, 'processPayment'])->name('pay.process');
 Route::get('/payment/success', [StripePaymentController::class, 'paymentSuccess'])->name('payment.success');
+
+use App\Http\Controllers\ProfileController;
+
+// ... المسارات الأخرى ...
+
+// مجموعة مسارات تتطلب تسجيل الدخول (middleware('auth'))
+Route::middleware('auth')->group(function () {
+    // المسار لصفحة عرض الملف الشخصي
+    Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
+    Route::get('/userinfo', [ProfileController::class, 'show'])->name('userinfo');
+
+    // ... مسارات أخرى داخل مجموعة المصادقة ...
+});

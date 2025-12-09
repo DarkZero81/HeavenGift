@@ -20,16 +20,29 @@
                     <li class="nav-item"><a class="nav-link text-light fs-3" href="{{ route('register') }}">Register</a>
                     </li>
                 @else
-                    <li class="nav-item"><a class="nav-link text-white fs-4" href="#">Hi,
-                            {{ auth()->user()->name }}</a>
+                    <li class="nav-item">
+                        <a class="nav-link text-white fs-4" href="{{ route('userinfo') }}">
+                            <img width="45" height="45"
+                                src="https://img.icons8.com/?size=100&id=KdWbf0poZEB2&format=png&color=000000"
+                                alt="User" class="me-2" />
+                            {{ auth()->user()->name }}
+                        </a>
                     </li>
                     <li class="nav-item">
                         <a class="nav-link text-warning fs-4" href="{{ route('logout') }}"
-                            onclick="event.preventDefault();document.getElementById('logout-form').submit()">Logout</a>
+                            onclick="event.preventDefault();document.getElementById('logout-form').submit()">
+                            <img width="50" height="50"
+                                src="https://img.icons8.com/?size=100&id=vGj0AluRnTSa&format=png&color=ffd700"
+                                alt="Logout" class="me-2" />Logout
+                        </a>
                     </li>
                     <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display:none">@csrf</form>
                 @endguest
-                <li class="nav-item"><a class="nav-link text-white fs-4" href="{{ route('cart.index') }}">Cart</a></li>
+                <li class="nav-item"><a class="nav-link text-white fs-4" href="{{ route('cart.index') }}"> <img
+                            width="50" height="50"
+                            src="https://img.icons8.com/?size=100&id=119194&format=png&color=000000" alt="User"
+                            class="me-2" />Cart</a></li>
+
             </ul>
         </div>
     </div>

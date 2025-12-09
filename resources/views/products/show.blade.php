@@ -3,9 +3,37 @@
 @section('title', $product->name)
 
 @section('content')
+    <style>
+        /* From Uiverse.io by PriyanshuGupta28 */
+        .rating {
+            display: inline-block;
+        }
 
+        .rating input {
+            display: none;
+        }
+
+        .rating label {
+            float: right;
+            cursor: pointer;
+            color: #ccc;
+            transition: color 0.3s;
+        }
+
+        .rating label:before {
+            content: '\2605';
+            font-size: 30px;
+        }
+
+        .rating input:checked~label,
+        .rating label:hover,
+        .rating label:hover~label {
+            color: #6f00ff;
+            transition: color 0.3s;
+        }
+    </style>
     <div class="row mt-4">
-        <div class="col-md-6">
+        <div class="col-md-4">
             @if ($product->image)
                 @php $img = $product->image; @endphp
                 @if (filter_var($img, FILTER_VALIDATE_URL))
@@ -33,14 +61,12 @@
         </div>
     </div>
 
-    <!-- قسم التقييمات -->
     <section class="mt-5 p-5">
         <div class="card">
             <div class="card-header">
-                <h4>تقييمات العملاء</h4>
+                <h4>Customer Rating</h4>
             </div>
             <div class="card-body">
-                <!-- متوسط التقييم -->
                 <div class="row mb-4">
                     <div class="col-md-4 text-center">
                         <h2 class="text-primary">{{ number_format($averageRating, 1) }}</h2>
@@ -50,7 +76,7 @@
                                     class="bi bi-star{{ $i <= floor($averageRating) ? '-fill' : ($i <= $averageRating ? '-half' : '') }}"></i>
                             @endfor
                         </div>
-                        <p class="text-muted">بناءً على {{ $reviewsCount }} تقييم</p>
+                        <p class="text-muted">Based on {{ $reviewsCount }} Ratings</p>
                     </div>
                     <div class="col-md-8">
                         @for ($i = 5; $i >= 1; $i--)
@@ -63,7 +89,9 @@
                                             class="bi bi-star-fill text-warning"></i></small>
                                 </div>
                                 <div class="col-8">
-                                    <div class="progress" style="height: 8px;">
+                                    <div class="progress" style="height: 8px;" role="progressbar"
+                                        aria-valuenow="{{ $percentage }}" aria-valuemin="0" aria-valuemax="100"
+                                        aria-label="{{ $i }} star ratings - {{ number_format($percentage, 1) }}%">
                                         <div class="progress-bar bg-warning" style="width: {{ $percentage }}%"></div>
                                     </div>
                                 </div>
@@ -75,7 +103,6 @@
                     </div>
                 </div>
 
-                <!-- قائمة التقييمات -->
                 <div class="reviews-list">
                     @forelse($approvedReviews as $review)
                         <div class="review-item border-bottom pb-3 mb-3">
@@ -93,26 +120,32 @@
                             </div>
                         </div>
                     @empty
-                        <p class="text-muted text-center">لا توجد تقييمات حتى الآن.</p>
+                        <p class="text-muted text-center">There Is No Comment Right Now.</p>
                     @endforelse
                 </div>
 
-                <!-- نموذج إضافة تقييم -->
+                {{-- ⭐️ إضافة روابط ترقيم الصفحات هنا ⭐️ --}}
+                <div class="d-flex justify-content-center mt-4">
+                    {{ $approvedReviews->links() }}
+                </div>
+                {{-- --------------------------------- --}}
+
                 @auth
                     <div class="mt-4">
-                        <h5>أضف تقييمك</h5>
+                        <h5>Add Your Rating</h5>
                         <form action="{{ route('reviews.store', $product) }}" method="POST">
                             @csrf
                             <div class="form-group">
-                                <label>التقييم:</label>
+                                <label>Rating:</label>
                                 <div class="rating-stars">
                                     @for ($i = 5; $i >= 1; $i--)
-                                        <input type="radio" id="star{{ $i }}" name="rating"
-                                            value="{{ $i }}" {{ $i == 5 ? 'checked' : '' }}>
-                                        <label for="star{{ $i }}" class="star-label">
-                                            <i class="bi bi-star-fill"></i>
-                                        </label>
+                                        <div class="rating">
+                                            <input value="{{ $i }}" {{ $i == 5 ? 'checked' : '' }} name="rating"
+                                                id="star{{ $i }}" type="radio">
+                                            <label for="star{{ $i }}"></label>
+                                        </div>
                                     @endfor
+
                                 </div>
                             </div>
                             <div class="form-group">
@@ -120,7 +153,7 @@
                                 <textarea name="comment" id="comment" class="form-control mt-2" rows="3"
                                     placeholder="شاركنا تجربتك مع هذا المنتج..."></textarea>
                             </div>
-                            <button type="submit" class="btn btn-primary mt-3">Send Rate </button>
+                            <button type="submit" class="btn btn-primary mt-3">Send Rating</button>
                         </form>
                     </div>
                 @else

@@ -9,19 +9,9 @@ use App\Models\Payment;
 
 class StripePaymentController extends Controller
 {
-    // داخل StripePaymentController.php
-
     public function showPaymentForm()
     {
-        // افترض أن هذه القيم تأتي من سلة المشتريات أو إعدادات النظام
-        $amount = 150.00;
-        $currency = 'USD'; // يمكن أن تكون USD, EUR, etc.
-
-        return view('pay', [
-            'stripeKey' => env('STRIPE_KEY'), // مفتاح Stripe العام
-            'amount' => $amount,
-            'currency' => $currency, // تمرير العملة
-        ]);
+        return view('pay', ['stripeKey' => config('services.stripe.key')]);
     }
 
     public function processPayment(Request $request)

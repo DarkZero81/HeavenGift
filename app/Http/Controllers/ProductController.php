@@ -8,22 +8,33 @@ use Illuminate\Http\Request;
 
 class ProductController extends Controller
 {
-    public function show($id)
+    /**
+     * Display the specified product.
+     */
+    public function show(int $id)
     {
-        $product = Product::with(['category', 'reviews.user'])->findOrFail($id);
+        // 1. تحميل المنتج والفئة فقط (إزالة eager loading لـ reviews لكي نتمكن من الترقيم بكفاءة)
+        $product = Product::with('category')->findOrFail($id);
 
-        // حساب متوسط التقييم
-        $averageRating = $product->reviews->avg('rating') ?? 0;
-        $reviewsCount = $product->reviews->count();
+        // 2. جلب جميع التقييمات المعتمدة مرة واحدة لحساب الإحصائيات
+        $allApprovedReviews = $product->reviews()->where('approved', true)->get();
 
-        // حساب عدد كل تقييم
+        // حساب متوسط التقييم وإجمالي عدد المراجعات
+        $averageRating = $allApprovedReviews->avg('rating') ?? 0;
+        $reviewsCount = $allApprovedReviews->count();
+
+        // حساب عدد كل تقييم (يتم باستخدام المجموعة التي تم جلبها)
         $ratingCounts = [];
         for ($i = 1; $i <= 5; $i++) {
-            $ratingCounts[$i] = $product->reviews->where('rating', $i)->count();
+            $ratingCounts[$i] = $allApprovedReviews->where('rating', $i)->count();
         }
 
-        // التقييمات المقبولة فقط
-        $approvedReviews = $product->reviews->where('approved', true);
+        // 3. التقييمات المقبولة للعرض مع الترقيم (Pagination)
+        // نستخدم latest() لترتيب الأحدث أولاً، و paginate(5) لعرض 5 تقييمات في كل صفحة
+        $approvedReviews = $product->reviews()
+            ->where('approved', true)
+            ->latest() // لترتيب التقييمات من الأحدث
+            ->paginate(5);
 
         $relatedProducts = Product::where('category_id', $product->category_id)
             ->where('id', '!=', $product->id)
@@ -36,7 +47,7 @@ class ProductController extends Controller
             'averageRating',
             'reviewsCount',
             'ratingCounts',
-            'approvedReviews',
+            'approvedReviews', // الآن هو كائن Paginator
             'relatedProducts'
         ));
     }
@@ -52,11 +63,11 @@ class ProductController extends Controller
         if ($request->filled('category')) {
             $selectedCategory = Category::find($request->get('category'));
             if ($selectedCategory) {
-                $query->where('category_id', $selectedCategory->id);
+                $query->where('category_id', $selectedCategory->getKey());
             }
         }
 
-        $products = $query->latest()->paginate(12)->withQueryString();
+        $products = $query->latest()->paginate(6)->withQueryString();
         $categories = Category::where('is_active', true)->get();
 
         return view('products.index', compact('products', 'categories', 'selectedCategory'));

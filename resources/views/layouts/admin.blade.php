@@ -94,9 +94,10 @@
     </style>
 </head>
 
-<body>
+<body class="p-0">
     <div class="container-fluid">
         <div class="row">
+
             <!-- Sidebar -->
             <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse rounded-3">
                 <div class="position-sticky pt-3">
@@ -159,7 +160,7 @@
             </nav>
 
             <!-- Main content -->
-            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
+            <main class="col-md-9 ms-sm-auto col-lg-10 p-0">
                 <!-- Navbar -->
                 <nav class="navbar navbar-expand-lg navbar-light bg-white mb-4">
                     <div class="container-fluid">
@@ -169,18 +170,8 @@
                         </button>
 
                         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                                <li class="nav-item">
-                                    <span class="navbar-text">
-                                        مرحباً، {{ Auth::user()->name }}
-                                    </span>
-                                </li>
-                            </ul>
-                            <div class="d-flex">
-                                <span class="navbar-text">
-                                    {{ now()->format('Y-m-d H:i') }}
-                                </span>
-                            </div>
+                            @include('partials.navbar')
+
                         </div>
                     </div>
                 </nav>
