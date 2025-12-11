@@ -75,31 +75,8 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    // User Dropdown Enhancements
-    const userDropdown = document.querySelector(".user-dropdown");
-    const dropdownMenu = document.querySelector(".user-dropdown-menu");
-
-    if (userDropdown && dropdownMenu) {
-        // Add hover effect for desktop
-        if (window.innerWidth >= 992) {
-            let hoverTimeout;
-
-            userDropdown.addEventListener("mouseenter", function () {
-                clearTimeout(hoverTimeout);
-                const dropdown = new bootstrap.Dropdown(this);
-                dropdown.show();
-            });
-
-            userDropdown.addEventListener("mouseleave", function () {
-                hoverTimeout = setTimeout(() => {
-                    const dropdown = bootstrap.Dropdown.getInstance(this);
-                    if (dropdown) {
-                        dropdown.hide();
-                    }
-                }, 300);
-            });
-        }
-    }
+    // User Dropdown - Using Bootstrap native dropdown (data-bs-toggle="dropdown")
+    // No custom JavaScript needed for dropdown functionality
 
     // Smooth scroll for anchor links
     document.querySelectorAll('a[href^="#"]').forEach((anchor) => {

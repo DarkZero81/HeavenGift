@@ -105,7 +105,7 @@
 
         .redirect-info {
             background: #e3f2fd;
-            border: 1px solid #2196f3;
+            border: 1px solid #a;
             border-radius: 8px;
             padding: 15px;
             margin: 25px 0;

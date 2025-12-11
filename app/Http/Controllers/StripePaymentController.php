@@ -13,10 +13,25 @@ class StripePaymentController extends Controller
     /**
      * Show the payment form view.
      */
-    public function showPaymentForm()
+    public function showPaymentForm(Request $request)
     {
+        $orderId = $request->query('order_id');
+        $order = null;
+        $amount = 150.00; // Default amount if no order found
+
+        if ($orderId) {
+            $order = \App\Models\order::find($orderId);
+            if ($order) {
+                $amount = $order->total;
+            }
+        }
+
         // This key is publishable and safe to expose to the client side.
-        return view('pay', ['stripeKey' => config('services.stripe.key')]);
+        return view('pay', [
+            'stripeKey' => config('services.stripe.key'),
+            'order' => $order,
+            'amount' => $amount
+        ]);
     }
 
     /**
@@ -31,6 +46,8 @@ class StripePaymentController extends Controller
             // 'payment_method' is typically the Stripe Payment Method ID from the frontend
             'payment_method' => 'required|string',
             'email' => 'required|email',
+            'order_id' => 'nullable|exists:orders,id',
+            'zip_code' => 'nullable|string|max:10',
         ]);
 
         // 2. Stripe Initialization
@@ -46,11 +63,14 @@ class StripePaymentController extends Controller
                 'currency' => 'usd',
                 'payment_method' => $request->payment_method,
                 'receipt_email' => $request->email,
+                'billing_address' => [
+                    'postal_code' => $request->zip_code ?? '123',
+                ],
                 // Crucial for telling Stripe what URL to redirect to if a 3D Secure
                 // or other "next action" is required after the initial request.
                 'confirm' => true,
                 // The URL Stripe will send the customer to after they complete the 3D Secure check.
-                'return_url' => route('payment-success') . '?id=' . $request->payment_method,
+                'return_url' => route('payment-success') . '?id=' . $request->payment_method . '&order_id=' . ($request->order_id ?? ''),
                 // You were setting 'automatic_payment_methods' but 'confirm' is the correct way
                 // to handle the immediate attempt with a provided payment method ID.
             ]);
@@ -75,6 +95,7 @@ class StripePaymentController extends Controller
                 'currency' => 'usd',
                 'status' => $status, // The status will be 'succeeded', 'requires_capture', or 'failed'
                 'email' => $request->email,
+                'order_id' => $request->order_id,
             ]);
 
             // 6. Final Success Response
@@ -117,15 +138,22 @@ class StripePaymentController extends Controller
     public function paymentSuccess(Request $request)
     {
         $paymentId = $request->query('id');
+        $orderId = $request->query('order_id');
 
         // البحث عن الدفع باستخدام payment_intent_id
         $payment = Payment::where('payment_intent_id', $paymentId)->first();
+
+        // Get order details if available
+        $order = null;
+        if ($orderId) {
+            $order = \App\Models\order::find($orderId);
+        }
 
         if (!$payment) {
             // If the record isn't found, create a demo payment for display
             $payment = new \stdClass();
             $payment->payment_intent_id = $paymentId;
-            $payment->amount = 150.00;
+            $payment->amount = $order ? $order->total : 150.00;
             $payment->currency = 'usd';
             $payment->status = 'succeeded';
             $payment->email = 'demo@example.com';
@@ -137,7 +165,7 @@ class StripePaymentController extends Controller
         // $intent = PaymentIntent::retrieve($paymentId);
         // $payment->update(['status' => $intent->status]); // Update status
 
-        return view('pay-success', compact('payment'));
+        return view('pay-success', compact('payment', 'order'));
     }
 
     /**

@@ -15,9 +15,9 @@
     <!-- Custom styles -->
     <style>
         :root {
-            --primary: #FF6B00;
+            --primary: #667eea;
             /* Orange */
-            --secondary: #50247A;
+            --secondary: #764ba2;
             /* Purple */
             --dark: #0F061E;
             /* Very Dark Blue/Black */
@@ -92,6 +92,77 @@
 
         .badge-secondary {
             background-color: var(--secondary);
+
+            .badge-secondary {
+                background-color: var(--secondary);
+            }
+
+            /* Enhanced Sidebar Styling */
+            .sidebar .nav-section-title {
+                color: var(--accent);
+                font-size: 0.9rem;
+                font-weight: 600;
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin: 1.5rem 0 0.5rem 1rem;
+                opacity: 0.8;
+            }
+
+            .sidebar .nav-item {
+                margin-bottom: 0.25rem;
+            }
+
+            .sidebar .nav-link {
+                border-radius: 8px;
+                margin: 0 0.5rem;
+                transition: all 0.3s ease;
+                position: relative;
+                overflow: hidden;
+            }
+
+            .sidebar .nav-link::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: -100%;
+                width: 100%;
+                height: 100%;
+                background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+                transition: left 0.5s;
+            }
+
+            .sidebar .nav-link:hover::before {
+                left: 100%;
+            }
+
+            .sidebar .nav-link i {
+                width: 20px;
+                text-align: center;
+
+                /* Card border styles for analytics dashboard */
+                .border-left-primary {
+                    border-left: 4px solid var(--primary) !important;
+                }
+
+                .border-left-success {
+                    border-left: 4px solid #28a745 !important;
+                }
+
+                .border-left-info {
+                    border-left: 4px solid #17a2b8 !important;
+                }
+
+                .border-left-warning {
+                    border-left: 4px solid #ffc107 !important;
+                }
+
+                /* Chart area styling */
+                .chart-area {
+                    position: relative;
+                    height: 350px;
+                    width: 100%;
+                }
+            }
         }
     </style>
 </head>
@@ -101,11 +172,14 @@
         <div class="row">
 
             <!-- Sidebar -->
-            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse rounded-3">
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse rounded-3 fs-4">
+                </li>
+                </ul>
+
+
                 <div class="position-sticky pt-3">
                     <div class="text-center mb-4">
                         <h4><i class="bi bi-gift me-2"></i>Gift Haven</h4>
-                        <small>Dashboard </small>
                     </div>
 
                     <ul class="nav flex-column">
@@ -137,6 +211,49 @@
                                 Orders
                             </a>
                         </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::is('admin/coupons*') ? 'active' : '' }}"
+                                href="{{ route('admin.coupons.index') }}">
+                                <i class="bi bi-ticket-perforated me-2"></i>
+                                Coupons
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::is('admin/reviews*') ? 'active' : '' }}"
+                                href="{{ route('admin.reviews.index') }}">
+                                <i class="bi bi-star me-2"></i>
+                                Reviews
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::is('admin/payments*') ? 'active' : '' }}"
+                                href="{{ route('admin.payments.index') }}">
+                                <i class="bi bi-credit-card me-2"></i>
+                                Payments
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::is('admin/users*') ? 'active' : '' }}"
+                                href="{{ route('admin.users.index') }}">
+                                <i class="bi bi-people me-2"></i>
+                                Users
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::is('admin/analytics*') ? 'active' : '' }}"
+                                href="{{ route('admin.analytics') }}">
+                                <i class="bi bi-graph-up me-2"></i>
+                                Analytics
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {{ Request::is('admin/settings*') ? 'active' : '' }}"
+                                href="{{ route('admin.settings') }}">
+                                <i class="bi bi-gear me-2"></i>
+                                Settings
+                            </a>
+                        </li>
                     </ul>
 
                     <hr>
@@ -149,9 +266,15 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="{{ url('/userinfo') }}" target="_blank">
+                                <i class="bi bi-person me-2"></i>
+                                Profile
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="nav-link btn btn-link text-start w-100">
+                                <button type="submit" class="nav-link btn btn-link text-start w-100 fs-4">
                                     <i class="bi bi-box-arrow-right me-2"></i>
                                     Log-out
                                 </button>

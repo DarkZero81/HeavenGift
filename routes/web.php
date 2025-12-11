@@ -121,4 +121,30 @@ Route::prefix('admin')->name('admin.')->middleware(['auth', \App\Http\Middleware
     // مسارات الطلبات
     Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'destroy']);
     Route::post('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+    // مسارات الطلبات
+    Route::resource('orders', AdminOrderController::class)->only(['index', 'show', 'destroy']);
+    Route::post('orders/{order}/status', [AdminOrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+    // Coupons Management
+    Route::resource('coupons', \App\Http\Controllers\Admin\CouponController::class);
+
+    // Reviews Management
+    Route::resource('reviews', \App\Http\Controllers\Admin\ReviewController::class);
+
+    // Payments Management
+    Route::resource('payments', \App\Http\Controllers\Admin\PaymentController::class)->only(['index', 'show', 'destroy']);
+    Route::get('/payments/create', [\App\Http\Controllers\Admin\PaymentController::class, 'create'])->name('payments.create');
+    Route::post('/payments', [\App\Http\Controllers\Admin\PaymentController::class, 'store'])->name('payments.store');
+
+    // Users Management
+    Route::resource('users', \App\Http\Controllers\Admin\UserController::class)->only(['index', 'show', 'edit', 'update', 'destroy']);
+    Route::get('/users/create', [\App\Http\Controllers\Admin\UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [\App\Http\Controllers\Admin\UserController::class, 'store'])->name('users.store');
+
+    // Analytics
+    Route::get('/analytics', [\App\Http\Controllers\Admin\AnalyticsController::class, 'index'])->name('analytics');
+
+    // Settings
+    Route::get('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'index'])->name('settings');
+    Route::put('/settings', [\App\Http\Controllers\Admin\SettingsController::class, 'update'])->name('settings.update');
 });
