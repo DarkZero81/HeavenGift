@@ -169,7 +169,7 @@
                                                 @if ($review->product)
                                                     <div class="d-flex align-items-center">
                                                         @if ($review->product->image)
-                                                            <img src="{{ asset('Photo/' . $review->product->image) }}"
+                                                            <img src="{{ asset($review->product->image) }}"
                                                                 alt="{{ $review->product->name }}" class="rounded me-2"
                                                                 style="width: 40px; height: 40px; object-fit: cover;">
                                                         @endif
